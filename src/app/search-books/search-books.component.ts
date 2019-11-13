@@ -1,15 +1,82 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { book, books, SearchBooksProps } from '../types';
+import { BookService } from '../book.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-search-books',
   templateUrl: './search-books.component.html',
-  styles: []
+  styles: ['./search-books.component.css']
 })
-export class SearchBooksComponent implements OnInit {
-
-  constructor() { }
+export class SearchBooksComponent
+  implements OnInit, OnDestroy, SearchBooksProps {
+  searchResults: books = [];
+  query: string = '';
+  books: books = [];
+  loadBookSub$: Subscription;
+  statusChanged$: Subscription;
+  constructor(private bookService: BookService) {}
 
   ngOnInit() {
+    //TODO: Extract refactor this.
+    this.loadBooks();
+    this.statusChanged$ = this.bookService.bookStatusChanged.subscribe(() => {
+      this.loadBooks();
+    });
   }
 
+  //TODO: Extract this.
+  loadBooks() {
+    this.loadBookSub$ = this.bookService
+      .loadBooks()
+      .subscribe((books: books) => {
+        this.books = books;
+      });
+  }
+
+  search = (event: any) => {
+    const searchLimit: number = 100;
+    const eventQuery = event.target.value;
+    this.updateSearchQuery(eventQuery);
+
+    eventQuery && eventQuery.length > 0
+      ? this.bookService
+          .searchBooks(eventQuery, searchLimit)
+          .subscribe((results: books) => {
+            results && results.length > 1
+              ? this.setSearchResults(
+                  results.map((result: book) => {
+                    return this.getSearchedBook(result);
+                  })
+                )
+              : null;
+          })
+      : (this.searchResults = []);
+  };
+
+  ngOnDestroy() {
+    this.statusChanged$ ? this.statusChanged$.unsubscribe() : null;
+    this.loadBooks ? this.loadBookSub$.unsubscribe() : null;
+  }
+
+  private getSearchedBook = (result: book) => {
+    let cabinet = this.books;
+    let index = cabinet.findIndex(i => i.id === result.id);
+    if (index !== -1) {
+      return cabinet[index];
+    } else {
+      result.shelf = 'none';
+      return result;
+    }
+  };
+
+  private setSearchResults = (searchResults: book[]) => {
+    searchResults && searchResults.length > 1
+      ? (this.searchResults = searchResults)
+      : (this.searchResults = []);
+  };
+
+  private updateSearchQuery(query: string) {
+    this.query ? (this.query = query) : (this.query = '');
+  }
 }

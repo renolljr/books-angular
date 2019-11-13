@@ -1,1 +1,22 @@
-<p>search-books works!</p>
+<div class="search-books">
+    <div class="search-books-bar">
+      <a style="cursor:pointer;" routerLinkActive="close-search" routerLink="/">Close</a>
+      <div class="search-books-input-wrapper">
+        <input 
+          type="text"
+          [value]="query"
+          placeholder="Search by title or author"
+          (keyup) = search($event) 
+          #searchInput/>
+      </div>
+    </div>
+    <div *ngIf="books.length > 1" class="search-books-results">
+        <ol class="books-grid">
+            <li *ngFor="let book of searchResults" >
+                <app-book 
+                    [book]="book"
+                    [shelf]="book.shelf ? book.shelf : 'none'"></app-book>
+            </li>
+       </ol>
+    </div>
+</div>

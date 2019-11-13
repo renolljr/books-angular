@@ -1,1 +1,24 @@
-<p>listbooks works!</p>
+<div class="list-books">
+    <div class="list-books-title">
+      <h1>My Reads Angular</h1>
+    </div>
+    <div class="list-books-content">
+      <div *ngFor="let section of sections;">
+        <div class="bookshelf">
+          <h2 class="bookshelf-title">{{section.title}}</h2>
+            <div class="bookshelf-books">
+              <ol class="books-grid">
+             <li *ngFor="let book of getBooksForShelf(books,section);">
+                 <app-book
+                  [book] = 'book'
+                  [shelf] = 'section.id'></app-book>
+               </li> 
+              </ol>
+            </div>
+        </div>
+    </div>
+    </div>
+    <div class="open-search">
+      <a style="cursor:pointer;" routerLinkActive="active" routerLink="/search">Add a book</a>
+    </div>
+</div>

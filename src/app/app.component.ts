@@ -1,4 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, Injectable } from '@angular/core';
+import { inherits } from 'util';
+import { BookService } from './book.service';
+import { books } from './types';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +10,7 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'books-angular';
+  books: books;
+
+  constructor() {}
 }
