@@ -8,13 +8,15 @@ import { ListbooksComponent } from './listbooks/listbooks.component';
 import { SearchBooksComponent } from './search-books/search-books.component';
 import { BookService } from './book.service';
 import { ApiService } from './api.service';
+import { BookShelfChangerComponent } from './book-shelf-changer/book-shelf-changer.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     BookComponent,
     ListbooksComponent,
-    SearchBooksComponent
+    SearchBooksComponent,
+    BookShelfChangerComponent
   ],
   imports: [BrowserModule, AppRoutingModule],
   providers: [ApiService, BookService],

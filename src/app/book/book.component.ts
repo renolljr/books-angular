@@ -3,6 +3,10 @@ import { book, BookProps } from '../types';
 import { BookService } from '../book.service';
 import { Subscription } from 'rxjs';
 
+interface IBookEvent {
+  book: book;
+  event: any;
+}
 @Component({
   selector: 'app-book',
   templateUrl: './book.component.html',
@@ -11,15 +15,16 @@ import { Subscription } from 'rxjs';
 export class BookComponent implements OnInit, OnDestroy, BookProps {
   @Input() book: book;
   @Input() shelf: string;
+
   update$: Subscription;
 
   constructor(private bookService: BookService) {}
 
   ngOnInit() {}
 
-  update(book: book, event: any) {
+  update($event: IBookEvent) {
     this.update$ = this.bookService
-      .updateBooks(book, event.target.value)
+      .updateBooks($event.book, $event.event.target.value)
       .subscribe(() => {
         this.bookService.bookStatusChanged.next(true);
       });

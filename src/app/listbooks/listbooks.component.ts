@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { book, books, ListBooksProps, sectionID } from '../types';
+import { books, ListBooksProps, sectionID } from '../types';
 import { BookService } from '../book.service';
 import { Subscription } from 'rxjs';
 

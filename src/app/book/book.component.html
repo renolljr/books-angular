@@ -1,31 +1,22 @@
 <div class="book">  
-    <div class="book-top" *ngIf="book.imageLinks" [ngStyle]="{ width: 128, height: 193, 'background-image': 'url('+book.imageLinks.thumbnail+')'}">
-      <div class="book-cover"></div>
-      <div class="book-cover"></div>
-      <div class="book-shelf-changer">
-        <select value={shelf} (change)="update(book, $event)">
-          <option value="title" disabled>Move to...</option>
-          <option value="currentlyReading">Currently Reading</option>
-          <option value="wantToRead">Want to Read</option>
-          <option value="read">Read</option>
-          <option value="none">None</option>
-        </select>
-      </div>
-    </div>
-    <div class="book-top" *ngIf="!book.imageLinks" [ngStyle]="{ width: 128, height: 193}">
-        <div class="book-cover"></div>
-        <div class="book-cover"></div>
-        <div class="book-shelf-changer">
-          <select value={shelf} (change)="update(book, $event)">
-            <option value="title" disabled>Move to...</option>
-            <option value="currentlyReading">Currently Reading</option>
-            <option value="wantToRead">Want to Read</option>
-            <option value="read">Read</option>
-            <option value="none">None</option>
-          </select>
+    <ng-container *ngIf="book.imageLinks; else noThumbNail" >
+        <div class="book-top"[ngStyle]="{ width: 128, height: 193, 'background-image': 'url('+book.imageLinks.thumbnail+')'}">
+            <div class="book-cover"></div>
+            <app-book-shelf-changer [book] = 'book' [shelf] = 'shelf' (selectionChanged)="update($event)">
+            </app-book-shelf-changer>
+          </div>
+          <div class="book-title">{{book.title}}</div>
+          <div class="book-authors" >{{ book.authors ? book.authors.join(', ') : ''}}</div>
+    </ng-container>
+    <ng-template #noThumbNail>
+        <div class="book-top"[ngStyle]="{ width: 128, height: 193}">
+          <div class="book-cover"></div>
+          <app-book-shelf-changer [book] = 'book' [shelf] = 'shelf' (selectionChanged)="update($event)">
+          </app-book-shelf-changer>
         </div>
-      </div>
-    <div class="book-title">{{book.title}}</div>
-    <div class="book-authors" >{{ book.authors ? book.authors.join(', ') : ''}}</div>
+        <div class="book-title">{{book.title}}</div>
+        <div class="book-authors" >{{ book.authors ? book.authors.join(', ') : ''}}</div>
+    </ng-template>
 </div>
+  
 

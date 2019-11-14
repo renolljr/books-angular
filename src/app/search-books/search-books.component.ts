@@ -8,10 +8,9 @@ import {
 } from '@angular/core';
 import { book, books, SearchBooksProps } from '../types';
 import { BookService } from '../book.service';
-import { Subscription, Subject, from, fromEvent } from 'rxjs';
+import { Subscription, Subject, fromEvent } from 'rxjs';
 import {
   map,
-  filter,
   debounceTime,
   distinctUntilChanged,
   switchMap
@@ -29,7 +28,6 @@ export class SearchBooksComponent
   books: books = [];
   loadBookSub$: Subscription;
   statusChanged$: Subscription;
-
   searchSub$: Subject<string> = new Subject();
 
   @ViewChild('searchInput', { static: false }) searchData: ElementRef;

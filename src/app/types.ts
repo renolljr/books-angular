@@ -20,7 +20,7 @@ export interface book {
   imageLinks: imageLink;
 }
 
-export interface BookProps extends updateBook {
+export interface BookProps {
   book: book;
   shelf: string;
 }
