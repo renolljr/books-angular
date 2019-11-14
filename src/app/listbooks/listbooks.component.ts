@@ -27,11 +27,6 @@ export class ListbooksComponent implements OnInit, OnDestroy, ListBooksProps {
     });
   }
 
-  ngOnDestroy() {
-    this.statusChanged$ ? this.statusChanged$.unsubscribe() : null;
-    this.loadBooks ? this.loadBookSub$.unsubscribe() : null;
-  }
-
   loadBooks() {
     this.loadBookSub$ = this.bookService
       .loadBooks()
@@ -44,5 +39,10 @@ export class ListbooksComponent implements OnInit, OnDestroy, ListBooksProps {
     return books && books.length > 0
       ? books.filter(book => book.shelf === section.id)
       : [];
+  }
+
+  ngOnDestroy() {
+    this.statusChanged$ ? this.statusChanged$.unsubscribe() : null;
+    this.loadBooks ? this.loadBookSub$.unsubscribe() : null;
   }
 }

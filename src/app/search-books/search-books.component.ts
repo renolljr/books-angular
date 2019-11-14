@@ -1,7 +1,21 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  ViewChild,
+  ElementRef,
+  AfterViewInit
+} from '@angular/core';
 import { book, books, SearchBooksProps } from '../types';
 import { BookService } from '../book.service';
-import { Subscription } from 'rxjs';
+import { Subscription, Subject, from, fromEvent } from 'rxjs';
+import {
+  map,
+  filter,
+  debounceTime,
+  distinctUntilChanged,
+  switchMap
+} from 'rxjs/operators';
 
 @Component({
   selector: 'app-search-books',
@@ -9,12 +23,17 @@ import { Subscription } from 'rxjs';
   styles: ['./search-books.component.css']
 })
 export class SearchBooksComponent
-  implements OnInit, OnDestroy, SearchBooksProps {
+  implements OnInit, OnDestroy, AfterViewInit, SearchBooksProps {
   searchResults: books = [];
   query: string = '';
   books: books = [];
   loadBookSub$: Subscription;
   statusChanged$: Subscription;
+
+  searchSub$: Subject<string> = new Subject();
+
+  @ViewChild('searchInput', { static: false }) searchData: ElementRef;
+
   constructor(private bookService: BookService) {}
 
   ngOnInit() {
@@ -23,6 +42,32 @@ export class SearchBooksComponent
     this.statusChanged$ = this.bookService.bookStatusChanged.subscribe(() => {
       this.loadBooks();
     });
+  }
+
+  ngAfterViewInit() {
+    const searchStream$ = fromEvent<any>(
+      this.searchData.nativeElement,
+      'keyup'
+    ).pipe(
+      map(event => event.target.value),
+      debounceTime(400),
+      distinctUntilChanged(),
+      switchMap(criteria => this.searchV2(criteria)) //searchV2 returns an Observable
+    );
+    searchStream$.subscribe((results: books) => {
+      results && results.length > 1
+        ? this.setSearchResults(
+            results.map((result: book) => {
+              return this.getSearchedBook(result);
+            })
+          )
+        : null;
+    });
+  }
+
+  ngOnDestroy() {
+    this.statusChanged$ ? this.statusChanged$.unsubscribe() : null;
+    this.loadBooks ? this.loadBookSub$.unsubscribe() : null;
   }
 
   //TODO: Extract this.
@@ -54,10 +99,14 @@ export class SearchBooksComponent
       : (this.searchResults = []);
   };
 
-  ngOnDestroy() {
-    this.statusChanged$ ? this.statusChanged$.unsubscribe() : null;
-    this.loadBooks ? this.loadBookSub$.unsubscribe() : null;
-  }
+  searchV2 = (event: any) => {
+    const searchLimit: number = 100;
+    this.updateSearchQuery(event);
+
+    return event && event.length > 0
+      ? this.bookService.searchBooks(event, searchLimit)
+      : (this.searchResults = []);
+  };
 
   private getSearchedBook = (result: book) => {
     let cabinet = this.books;
