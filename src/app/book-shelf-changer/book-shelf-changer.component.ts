@@ -1,10 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { book } from '../types';
+import { book, BookEvent } from '../types';
 
-interface IBookEvent {
-  book: book;
-  event: any;
-}
 @Component({
   selector: 'app-book-shelf-changer',
   templateUrl: './book-shelf-changer.component.html'
@@ -12,10 +8,10 @@ interface IBookEvent {
 export class BookShelfChangerComponent {
   @Input() book: book;
   @Input() shelf: string;
-  @Output() selectionChanged: EventEmitter<IBookEvent> = new EventEmitter();
+  @Output() selectionChanged: EventEmitter<BookEvent> = new EventEmitter();
 
   update(book: book, event: any) {
-    const eventPayload: IBookEvent = {
+    const eventPayload: BookEvent = {
       book: book,
       event: event
     };

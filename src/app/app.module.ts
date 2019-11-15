@@ -9,6 +9,7 @@ import { SearchBooksComponent } from './search-books/search-books.component';
 import { BookService } from './book.service';
 import { ApiService } from './api.service';
 import { BookShelfChangerComponent } from './book-shelf-changer/book-shelf-changer.component';
+import { NgxsModule } from '@ngxs/store';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,13 @@ import { BookShelfChangerComponent } from './book-shelf-changer/book-shelf-chang
     SearchBooksComponent,
     BookShelfChangerComponent
   ],
-  imports: [BrowserModule, AppRoutingModule],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    NgxsModule.forRoot([
+      /*Add your state defs here*/
+    ])
+  ],
   providers: [ApiService, BookService],
   bootstrap: [AppComponent]
 })

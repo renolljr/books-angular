@@ -11,6 +11,10 @@ export interface updateBook {
 export interface searchBook {
   search: (query: string) => void;
 }
+export interface BookEvent {
+  book: book;
+  event: any;
+}
 
 export interface book {
   id: number;
